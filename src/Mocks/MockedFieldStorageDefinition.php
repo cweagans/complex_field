@@ -28,7 +28,8 @@ class MockedFieldStorageDefinition implements FieldStorageDefinitionInterface {
       return $this->settings[$setting_name];
     }
 
-    throw new MissingStorageSettingException("{$setting_name} has not been set yet, but was requested by one of the sub-elements of a Complex Field.");
+    $message = "{$setting_name} has not been set yet, but was requested by one of the sub-elements of a Complex Field.";
+    throw new MissingStorageSettingException($message);
   }
 
   /**

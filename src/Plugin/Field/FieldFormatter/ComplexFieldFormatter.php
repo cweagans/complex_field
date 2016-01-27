@@ -148,9 +148,9 @@ class ComplexFieldFormatter extends FormatterBase {
   protected function _renderSimpleValue($item, $subelement_name) {
 
     // If there is a main property (which is the default), just output that as a string.
-    $mainPropertyName = $item::mainPropertyName();
-    if (!is_null($mainPropertyName)) {
-      return ['#markup' => nl2br(Html::escape($item->{$mainPropertyName}))];
+    $main_property_name = $item::mainPropertyName();
+    if (!is_null($main_property_name)) {
+      return ['#markup' => nl2br(Html::escape($item->{$main_property_name}))];
     }
 
     // Getting to this point should be very rare, and only means that a type-
@@ -187,7 +187,7 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderMap ($item, $subelement_name, $subelements) {
+  protected function renderMap($item, $subelement_name, $subelements) {
     // Meh. Implementers can deal with this, as it's usage should be pretty rare.
     throw new NotImplementedException("::renderMap()");
   }
@@ -205,7 +205,7 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderText ($item, $subelement_name, $subelements) {
+  protected function renderText($item, $subelement_name, $subelements) {
     return $this->_renderTextWithFormat($item);
   }
 
@@ -222,7 +222,7 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderTextLong ($item, $subelement_name, $subelements) {
+  protected function renderTextLong($item, $subelement_name, $subelements) {
     return $this->_renderTextWithFormat($item);
   }
 
@@ -239,7 +239,7 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderTextWithSummary ($item, $subelement_name, $subelements) {
+  protected function renderTextWithSummary($item, $subelement_name, $subelements) {
     return $this->_renderTextWithFormat($item);
   }
 
