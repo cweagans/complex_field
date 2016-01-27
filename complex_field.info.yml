@@ -1,0 +1,5 @@
+name: "Complex Field API"
+description: "Provides a simple way for developers to construct complex fields from other fields. You probably don't need this unless another module depends on it."
+core: 8.x
+type: module
+package: Field types

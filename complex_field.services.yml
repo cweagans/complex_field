@@ -1,0 +1,4 @@
+services:
+  complex_field.plugin_data_loader:
+    class: Drupal\complex_field\PluginDataLoader
+    arguments: ['@plugin.manager.field.field_type']
