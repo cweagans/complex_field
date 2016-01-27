@@ -30,9 +30,6 @@ class ComplexFieldWidgetBase extends WidgetBase {
    */
   public static function isApplicable(FieldDefinitionInterface $field_definition) {
     // If the field item extends ComplexFieldItemBase, then this formatter applies.
-    dpm($field_definition->getItemDefinition()->getClass());
-    dpm('\Drupal\complex_field\Plugin\Field\FieldType\ComplexFieldItemBase');
-    dpm(is_subclass_of($field_definition->getClass(), '\Drupal\complex_field\Plugin\Field\FieldType\ComplexFieldItemBase'));
     return is_subclass_of($field_definition->getClass(), '\Drupal\complex_field\Plugin\Field\FieldType\ComplexFieldItemBase');
   }
 
