@@ -96,7 +96,10 @@ class ComplexFieldItemBase extends FieldItemBase implements ComplexFieldItemInte
         // ::propertyDefinitions()
         case "properties":
           // Bring in each of the property definitions prefixed by $element_name.
-          $subelement_properties = $data_loader->getFieldTypePropertyDefinitions($configuration['plugin'], $mocked_field_storage_definition);
+          $subelement_properties = $data_loader->getFieldTypePropertyDefinitions(
+            $configuration['plugin'],
+            $mocked_field_storage_definition
+          );
           foreach ($subelement_properties as $name => $value) {
             $data[$element_name . '_' . $name] = $value;
           }
@@ -104,7 +107,10 @@ class ComplexFieldItemBase extends FieldItemBase implements ComplexFieldItemInte
 
         // ::schema()
         case "schema":
-          $subelement_schema = $data_loader->getFieldTypeSchemaDefinition($configuration['plugin'], $mocked_field_storage_definition);
+          $subelement_schema = $data_loader->getFieldTypeSchemaDefinition(
+            $configuration['plugin'],
+            $mocked_field_storage_definition
+          );
           // Are there any field types that don't have a columns key in their schema?
           // There shouldn't be, but just to be safe...
           if (!isset($subelement_schema['columns'])) {
