@@ -161,8 +161,10 @@ class ComplexFieldItemBase extends FieldItemBase implements ComplexFieldItemInte
    * {@inheritdoc}
    */
   public function getConstraints() {
-    // @todo Gather constraints from plugin definition annotation (see parent::getConstraints())
-    // @todo Gather constraints from each subelement plugin class (requires creating instances of the plugins which is more work than it's worth).
+    // @todo Gather constraints from plugin definition annotation
+    //  (see parent::getConstraints())
+    // @todo Gather constraints from each subelement plugin class (requires
+    //  creating instances of the plugins which is more work than it's worth).
     // For now, just throw an exception. Implementers need to provide their own
     // constraints or explicitly opt-out by overriding the function and returning
     // an empty array.
