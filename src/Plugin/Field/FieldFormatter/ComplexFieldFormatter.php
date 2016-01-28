@@ -8,6 +8,7 @@
 namespace Drupal\complex_field\Plugin\Field\FieldFormatter;
 
 use Drupal\complex_field\Exception\NotImplementedException;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -56,8 +57,8 @@ class ComplexFieldFormatter extends FormatterBase {
    * Returns whatever the base class gets.
    */
   protected function getFieldItemSubelements() {
-    $field_definition_class = $this->fieldDefinition->getClass();
-    return call_user_func("{$field_definition_class}::getFieldItemSubelements");
+    $field_definition_class = $this->fieldDefinition->getItemDefinition()->getClass();
+    return call_user_func([$field_definition_class, 'getSubelements']);
   }
 
   /**
@@ -76,6 +77,17 @@ class ComplexFieldFormatter extends FormatterBase {
 
     foreach ($subelements as $name => $subelement) {
       $output[$name] = $this->renderSubelement($item, $name, $subelements);
+
+      // Slap a title on any #markup elements.
+      // @todo Make this nice.
+      if (isset($output[$name]['#markup'])) {
+        $output[$name]['#prefix'] = '<div class="field__label">' . Html::escape($subelement['label']) . '</div>';
+      }
+
+      // If it's something else that has a type explicitly set, we can use #title
+      if (isset($output[$name]['#type'])) {
+        $output[$name]['#title'] = $subelement['label'];
+      }
     }
 
     return $output;
@@ -104,14 +116,18 @@ class ComplexFieldFormatter extends FormatterBase {
     $plugin = $subelements[$subelement_name]['plugin'];
     $method_name = $this->typeToMethodName($plugin);
 
+    // @todo Use DI for this.
+    $plugin_main_property_name = \Drupal::service('complex_field.plugin_data_loader')
+      ->getFieldTypeMainProperty($plugin);
+
     // If we have a render method specific to this type, use it.
     if (method_exists($this, $method_name)) {
-      return $this->{$method_name};
+      return $this->{$method_name}($item, $subelement_name, $plugin_main_property_name);
     }
 
     // If not, fall back to the simple render function.
     try {
-      return $this->_renderSimpleValue($item, $subelement_name);
+      return $this->_renderSimpleValue($item, $subelement_name, $plugin_main_property_name);
     }
     catch (\LogicException $e) {
       // Simple render function isn't applicable. No need to do anything here -
@@ -141,16 +157,18 @@ class ComplexFieldFormatter extends FormatterBase {
    *   A field item to pull the subelement data from.
    * @param string $subelement_name
    *   The name of the subelement config to use
+   * @param string $plugin_main_property_name
+   *   The name of the main property in the subelement plugin.
    *
    * @return array
    *   A render array for the subelement.
    */
-  protected function _renderSimpleValue($item, $subelement_name) {
+  protected function _renderSimpleValue($item, $subelement_name, $plugin_main_property_name) {
 
     // If there is a main property (which is the default), just output that as a string.
-    $main_property_name = $item::mainPropertyName();
-    if (!is_null($main_property_name)) {
-      return ['#markup' => nl2br(Html::escape($item->{$main_property_name}))];
+    if (!is_null($plugin_main_property_name)) {
+      $value_name = $subelement_name . '_' . $plugin_main_property_name;
+      return ['#markup' => nl2br(Html::escape($item->{$value_name}))];
     }
 
     // Getting to this point should be very rare, and only means that a type-
@@ -163,12 +181,14 @@ class ComplexFieldFormatter extends FormatterBase {
    *
    * @param FieldItemInterface $item
    */
-  protected function _renderTextWithFormat($item) {
+  protected function _renderTextWithFormat($item, $subelement_name, $plugin_main_property_name) {
+    $value_name = $subelement_name . '_value';
+    $format_name = $subelement_name . '_format';
     if (isset($item->value) && isset($item->format)) {
       return [
         '#type' => 'processed_text',
-        '#text' => $item->value,
-        '#format' => $item->format,
+        '#text' => $item->{$value_name},
+        '#format' => $item->{$format_name},
         '#langcode' => $item->getLangcode(),
       ];
     }
@@ -187,7 +207,7 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderMap($item, $subelement_name, $subelements) {
+  protected function renderMap($item, $subelement_name, $plugin_main_property_name) {
     // Meh. Implementers can deal with this, as it's usage should be pretty rare.
     throw new NotImplementedException("::renderMap()");
   }
@@ -205,8 +225,8 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderText($item, $subelement_name, $subelements) {
-    return $this->_renderTextWithFormat($item);
+  protected function renderText($item, $subelement_name, $plugin_main_property_name) {
+    return $this->_renderTextWithFormat($item, $subelement_name, $plugin_main_property_name);
   }
 
   /**
@@ -222,8 +242,8 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderTextLong($item, $subelement_name, $subelements) {
-    return $this->_renderTextWithFormat($item);
+  protected function renderTextLong($item, $subelement_name, $plugin_main_property_name) {
+    return $this->_renderTextWithFormat($item, $subelement_name, $plugin_main_property_name);
   }
 
   /**
@@ -239,8 +259,8 @@ class ComplexFieldFormatter extends FormatterBase {
    * @return array
    *   A render array for the subelement.
    */
-  protected function renderTextWithSummary($item, $subelement_name, $subelements) {
-    return $this->_renderTextWithFormat($item);
+  protected function renderTextWithSummary($item, $subelement_name, $plugin_main_property_name) {
+    return $this->_renderTextWithFormat($item, $subelement_name, $plugin_main_property_name);
   }
 
 }
