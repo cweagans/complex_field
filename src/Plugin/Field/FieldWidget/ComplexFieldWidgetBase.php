@@ -60,7 +60,8 @@ class ComplexFieldWidgetBase extends WidgetBase {
 
       // $name_$main_property so that things will save correctly. Name of the form keys
       // has to match the property name that they get saved to.
-      $element[$name . '_' . $main_property] = $this->getSubelementFormElement($item, $name, $subelements);
+      $element_name = $name . '_' . $main_property;
+      $element[$element_name] = $this->getSubelementFormElement($item, $name, $subelements, $element_name);
     }
 
     return $element;
@@ -87,20 +88,22 @@ class ComplexFieldWidgetBase extends WidgetBase {
    *   The subelement name.
    * @param array $subelements
    *   The subelement configuration array.
+   * @param string $element_name
+   *   The name of the $item key where the value can be found.
    *
    * @return array
    *   The form item to add to the element form.
    *
    * @todo This should use the widget forms defined in FieldWidget plugins instead of panicking when there's no custom render function.
    */
-  protected function getSubelementFormElement($item, $subelement_name, $subelements) {
+  protected function getSubelementFormElement($item, $subelement_name, $subelements, $element_name) {
     // Get the method name from the plugin type.
     $plugin = $subelements[$subelement_name]['plugin'];
     $method_name = $this->typeToMethodName($plugin);
 
     // If we have a form method specific to this type, use it.
     if (method_exists($this, $method_name)) {
-      return $this->{$method_name}($item, $subelement_name, $subelements);
+      return $this->{$method_name}($item, $subelement_name, $subelements, $element_name);
     }
 
     // If not, then try to get the form provided by the FieldWidget specified in $subelements.
