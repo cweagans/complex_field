@@ -52,7 +52,15 @@ class ComplexFieldWidgetBase extends WidgetBase {
     $element['#type'] = 'container';
 
     foreach ($subelements as $name => $config) {
-      $element[$name] = $this->getSubelementFormElement($item, $name, $subelements);
+
+      // Get the main property name for the subfield type.
+      // @todo Use dependency injection here.
+      $main_property = \Drupal::service('complex_field.plugin_data_loader')
+        ->getFieldTypeMainProperty($config['plugin']);
+
+      // $name_$main_property so that things will save correctly. Name of the form keys
+      // has to match the property name that they get saved to.
+      $element[$name . '_' . $main_property] = $this->getSubelementFormElement($item, $name, $subelements);
     }
 
     return $element;

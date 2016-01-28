@@ -68,6 +68,21 @@ class PluginDataLoader {
   }
 
   /**
+   * Get the name of the main property of a field type plugin.
+   *
+   * @param string $plugin_id
+   *   A plugin ID for a field type
+   *
+   * @return string
+   *   The name of the property
+   */
+  public function getFieldTypeMainProperty($plugin_id) {
+    $plugin_class = $this->fieldTypePluginManager->getPluginClass($plugin_id);
+    $main_property = call_user_func([$plugin_class, 'mainPropertyName']);
+    return $main_property;
+  }
+
+  /**
    * Get data from a field type plugin.
    *
    * @param $type
