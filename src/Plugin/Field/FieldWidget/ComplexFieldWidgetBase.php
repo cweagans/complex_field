@@ -113,4 +113,13 @@ class ComplexFieldWidgetBase extends WidgetBase {
     throw new NotImplementedException("Form element method for {$plugin} (::{$method_name})");
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function massageFormValues(array $values, array $form, FormStateInterface $form_state) {
+    // @TODO: Detect and prune empty subelement values here? Or figure out why FieldItemBase isn't doing it properly?
+    // Implementers will have to do this manually for now.
+    return $values;
+  }
+
 }
