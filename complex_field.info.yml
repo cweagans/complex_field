@@ -3,3 +3,4 @@ description: "Provides a simple way for developers to construct complex fields f
 core: 8.x
 type: module
 package: Field types
+version: 0.x
