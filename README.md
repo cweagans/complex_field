@@ -1,8 +1,5 @@
 # Complex field
 
-This module is currently going through the open source request process. When/if
-that's approved, this module will move to Drupal.org.
-
 ## Goal
 
 This module was written to avoid the mind-numbing tedium of writing custom field
@@ -30,9 +27,3 @@ have an easy way to set up fields with complex values.
   if the Widget and Formatter were configurable from the UI as well. This would
   make complex_field a viable alternative to field_collection, in that an extra
   entity is not required to have subfields on a field.
-
-## Notes
-
-* Jan 27: Submitted FOSS request form.
-* Jan 27: chx indicated interest in working on this module when it was released.
-
